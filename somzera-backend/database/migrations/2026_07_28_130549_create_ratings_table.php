@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
+            
+            // A MÁGICA DA CHAVE ESTRANGEIRA
+            $table->foreignId('music_id')->constrained('musics')->onDelete('cascade');
+            
+            // Dados gerados pelo usuário
+            $table->integer('score'); 
+            $table->string('title')->nullable(); 
+            $table->text('description'); 
+            
+            // Usuário mockado (pois o MVP ainda não tem um sistema de login real) [cite: 422]
+            $table->string('user'); 
+            
             $table->timestamps();
         });
     }
