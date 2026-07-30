@@ -16,7 +16,7 @@ return new class extends Migration
             
             // Dados vindos da API do Spotify
             $table->string('spotify_id')->unique(); // O ID real da música lá no Spotify [cite: 393]
-            $table->string('name'); // Nome da música [cite: 394]
+            $table->string('title'); // Nome da música [cite: 394]
             $table->string('artist'); // Nome do artista [cite: 394]
             $table->string('url_cover'); // A URL da imagem da capa [cite: 395]
             
