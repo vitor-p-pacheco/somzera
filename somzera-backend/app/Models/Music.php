@@ -9,6 +9,8 @@ class Music extends Model
 {
     use HasFactory;
 
+    protected $table = 'musics';
+
     // Colunas liberadas para preenchimento em massa
     protected $fillable = ['spotify_id', 'title', 'artist', 'url_cover'];
 

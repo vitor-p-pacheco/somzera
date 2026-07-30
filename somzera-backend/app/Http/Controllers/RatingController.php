@@ -12,7 +12,7 @@ class RatingController extends Controller
     public function index()
     {
         // Traz as últimas 10 reviews JÁ COM os dados da música atrelada
-        $recentRatings = Rating::with('music')->latest()->take(10)->get();
+        $recentRatings = Rating::with('musics')->latest()->take(10)->get();
         return response()->json($recentRatings);
     }
 
@@ -20,7 +20,7 @@ class RatingController extends Controller
     public function store(Request $request)
     {
         // 1. O Pulo do Gato: Acha a música pelo spotify_id ou cria uma nova
-        $music = Music::firstOrCreate(
+        $musics = Music::firstOrCreate(
             ['spotify_id' => $request->spotify_id],
             [
                 'title' => $request->music_title,
@@ -31,9 +31,9 @@ class RatingController extends Controller
 
         // 2. Cria a avaliação atrelada ao ID interno dessa música
         $rating = Rating::create([
-            'music_id' => $music->id,
+            'music_id' => $musics->id,
             'score' => $request->score,
-            'title' => $request->title,
+            'title' => $request->review_title,
             'description' => $request->description,
             'user' => $request->user,
         ]);
