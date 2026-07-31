@@ -12,7 +12,7 @@ class RatingController extends Controller
     public function index()
     {
         // Traz as últimas 10 reviews JÁ COM os dados da música atrelada
-        $recentRatings = Rating::with('musics')->latest()->take(10)->get();
+        $recentRatings = Rating::with('music')->latest()->take(10)->get();
         return response()->json($recentRatings);
     }
 
@@ -42,5 +42,23 @@ class RatingController extends Controller
             'message' => 'Review salva com sucesso no Somzera!',
             'rating' => $rating
         ], 201);
+    }
+
+    // Método para buscar as reviews de uma música específica
+    public function showByMusic($spotify_id)
+    {
+        // 1. Procuramos a música no nosso banco usando o ID do Spotify
+        $music = Music::where('spotify_id', $spotify_id)->first();
+
+        // 2. Se a música não existe no nosso banco, significa que ninguém nunca avaliou ela!
+        // Então, retornamos um array vazio direto para o Front-end.
+        if (!$music) {
+            return response()->json([]);
+        }
+
+        // 3. Se ela existe, usamos o relacionamento para buscar todas as avaliações dela, da mais nova para a mais velha
+        $ratings = Rating::where('music_id', $music->id)->latest()->get();
+
+        return response()->json($ratings);
     }
 }

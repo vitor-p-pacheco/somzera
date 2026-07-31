@@ -10,3 +10,6 @@ Route::get('/musics', [MusicController::class, 'search']);
 // Rotas de Reviews
 Route::get('/ratings', [RatingController::class, 'index']); // Lista as recentes
 Route::post('/ratings', [RatingController::class, 'store']); // Salva uma nova
+
+// NOVA ROTA: Busca reviews de uma música específica pelo ID do Spotify
+Route::get('/musics/{spotify_id}/ratings', [RatingController::class, 'showByMusic']);
