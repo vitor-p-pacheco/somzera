@@ -1,5 +1,30 @@
 @import url("https://fonts.googleapis.com/css2?family=Tahoma&family=Verdana&display=swap");
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
+@import "tailwindcss";
+
+@theme {
+  /* Cores Customizadas Somzera */
+  --color-sz-yellow: #FFBE0B;
+  --color-sz-purple: #3F37C9;
+  --color-sz-blue: #04B2D9;
+  --color-sz-light: #97BF04;
+  --color-sz-dark: #1B263B;
+  --color-sz-gray-border: #78A633;
+  --color-sz-bg-gray: #78A633;
+
+  /* Fontes */
+  --font-retro: "Tahoma", "Verdana", sans-serif;
+
+  /* Sombras Customizadas */
+  --shadow-retro-button: inset 1px 1px 0px rgba(255,255,255,0.8), inset -1px -1px 0px rgba(0,0,0,0.5), 1px 1px 3px rgba(0,0,0,0.3);
+  --shadow-retro-button-active: inset 2px 2px 4px rgba(0,0,0,0.5);
+  --shadow-retro-panel: inset 1px 1px 0px rgba(255,255,255,0.7), inset -1px -1px 0px rgba(0,0,0,0.4), 2px 2px 5px rgba(0,0,0,0.2);
+
+  /* Gradientes (Background Images) */
+  --background-image-glass-gradient: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 51%, rgba(0,0,0,0.2) 100%);
+  --background-image-header-gradient: linear-gradient(to bottom, #4361EE 0%, #3F37C9 100%);
+  --background-image-nav-gradient: linear-gradient(to bottom, #d4d4d4 0%, #a3a3a3 100%);
+}
 
 body {
   font-family: "Tahoma", "Verdana", sans-serif;
@@ -13,6 +38,10 @@ body {
 #root {
   display: contents;
 }
+
+/* =========================================
+   Classes Customizadas (Aero, Metro, Retro)
+   ========================================= */
 
 .aero-panel {
   background: rgba(243, 240, 255, 0.7);
