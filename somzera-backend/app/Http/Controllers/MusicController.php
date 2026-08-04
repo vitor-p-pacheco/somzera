@@ -34,7 +34,7 @@ class MusicController extends Controller
         $dadosLimpos = collect($tracksBrutas)->map(function ($track) {
             return [
                 'spotify_id' => $track['id'],
-                'title' => $track['name'],
+                'music_title' => $track['name'],
                 // Pega o nome do primeiro artista da lista (o Spotify manda um array de artistas)
                 'artist' => $track['artists'][0]['name'] ?? 'Artista Desconhecido',
                 // Pega a URL da primeira imagem da capa (o Spotify manda 3 tamanhos diferentes)
