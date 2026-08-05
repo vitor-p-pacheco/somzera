@@ -4,45 +4,92 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class MusicController extends Controller
 {
     public function search(Request $request)
     {
-        // 1. Pega o que o Heitor digitou
-        $query = $request->input('q', 'beatles');
-
-        // 2. Autenticação 100% Automática
-        $authResponse = Http::asForm()->post('https://accounts.spotify.com/api/token', [
-            'grant_type' => 'client_credentials',
-            'client_id' => env('SPOTIFY_CLIENT_ID'),
-            'client_secret' => env('SPOTIFY_CLIENT_SECRET'),
-        ]);
-        $token = $authResponse->json('access_token');
-
-        // 3. Busca os dados brutos no Spotify
-        $buscaResponse = Http::withToken($token)->get('https://api.spotify.com/v1/search', [
-            'q' => $query,
-            'type' => 'track',
-            'limit' => 5
+        // Validação básica do parâmetro de busca
+        $request->validate([
+            'q' => 'required|string|min:2|max:100'
         ]);
 
-        // Extrai apenas o array de músicas do JSON gigante do Spotify
-        $tracksBrutas = $buscaResponse->json('tracks.items');
+        $query = $request->input('q');
 
-        // 4. O FILTRO (A Mágica do BFF)
-        $dadosLimpos = collect($tracksBrutas)->map(function ($track) {
-            return [
-                'spotify_id' => $track['id'],
-                'music_title' => $track['name'],
-                // Pega o nome do primeiro artista da lista (o Spotify manda um array de artistas)
-                'artist' => $track['artists'][0]['name'] ?? 'Artista Desconhecido',
-                // Pega a URL da primeira imagem da capa (o Spotify manda 3 tamanhos diferentes)
-                'url_cover' => $track['album']['images'][0]['url'] ?? null,
-            ];
+        // CACHE DO TOKEN: Guarda por 50 minutos (o token dura 1 hora)
+        $token = Cache::remember('spotify_access_token', 3000, function () {
+            try {
+                $authResponse = Http::asForm()->post('https://accounts.spotify.com/api/token', [
+                    'grant_type' => 'client_credentials',
+                    'client_id' => env('SPOTIFY_CLIENT_ID'),
+                    'client_secret' => env('SPOTIFY_CLIENT_SECRET'),
+                ]);
+
+                if ($authResponse->successful()) {
+                    return $authResponse->json('access_token');
+                }
+
+                Log::error('Falha na autenticação Spotify', [
+                    'response' => $authResponse->body()
+                ]);
+                return null;
+            } catch (\Exception $e) {
+                Log::error('Erro ao conectar com Spotify', [
+                    'message' => $e->getMessage()
+                ]);
+                return null;
+            }
         });
 
-        // 5. Devolve o JSON estruturado para o React
-        return response()->json($dadosLimpos);
+        if (!$token) {
+            return response()->json([
+                'error' => 'Não foi possível conectar ao Spotify no momento.'
+            ], 503);
+        }
+
+        // Busca no Spotify
+        try {
+            $buscaResponse = Http::withToken($token)
+                ->timeout(10) // Timeout de 10 segundos
+                ->get('https://api.spotify.com/v1/search', [
+                    'q' => $query,
+                    'type' => 'track',
+                    'limit' => 10
+                ]);
+
+            if (!$buscaResponse->successful()) {
+                Log::error('Erro na busca Spotify', [
+                    'status' => $buscaResponse->status(),
+                    'body' => $buscaResponse->body()
+                ]);
+                return response()->json([
+                    'error' => 'Erro ao buscar músicas no Spotify.'
+                ], 502);
+            }
+
+            $tracksBrutas = $buscaResponse->json('tracks.items') ?? [];
+
+            // Filtra e limpa os dados
+            $dadosLimpos = collect($tracksBrutas)->map(function ($track) {
+                return [
+                    'spotify_id' => $track['id'],
+                    'music_title' => $track['name'],
+                    'artist' => $track['artists'][0]['name'] ?? 'Artista Desconhecido',
+                    'url_cover' => $track['album']['images'][0]['url'] ?? null,
+                ];
+            });
+
+            return response()->json($dadosLimpos);
+
+        } catch (\Exception $e) {
+            Log::error('Erro na requisição Spotify', [
+                'message' => $e->getMessage()
+            ]);
+            return response()->json([
+                'error' => 'Erro ao processar busca de músicas.'
+            ], 500);
+        }
     }
 }
