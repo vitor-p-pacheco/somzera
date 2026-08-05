@@ -37,7 +37,7 @@ export default function App() {
       <main className="flex-grow flex justify-center p-4 sm:p-6 lg:p-8 relative">
         <div className="aero-panel w-full max-w-6xl h-full min-h-[600px] flex flex-col overflow-hidden relative">
           {/* Barra superior Aero */}
-          <div className="bg-sz-blue aero-header px-4 py-2 flex flex-col md:flex-row justify-between items-center border-b border-sz-purple shadow-sm gap-2">
+          <div className="bg-sz-purple aero-header px-4 py-2 flex flex-col md:flex-row justify-between items-center border-b border-sz-purple shadow-sm gap-2">
             <div className="flex flex-col sm:flex-row items-center gap-3">
               <span className="font-bold text-lg italic text-sz-yellow drop-shadow-md whitespace-nowrap">descubra novas músicas! ➔</span>
               <div className="flex items-center h-6 shadow-retro-button rounded overflow-hidden">
@@ -71,7 +71,7 @@ export default function App() {
                 </h2>
 
                 {/* Caixa Principal Quadrada */}
-                <div className="relative z-10 w-64 h-64 bg-gradient-to-b from-gray-100 to-gray-300 rounded-xl border-4 border-sz-yellow shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_2px_5px_rgba(255,255,255,0.9)] p-3 flex flex-col items-center justify-between transition-all duration-300 hover:shadow-[0_15px_30px_rgba(255,190,11,0.5)]">
+                <div className="relative z-10 w-64 h-64 bg-gradient-to-b from-sz-dark to-gray-500 rounded-xl border-4 border-sz-yellow shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_2px_5px_rgba(255,255,255,0.9)] p-3 flex flex-col items-center justify-between transition-all duration-300 hover:shadow-[0_15px_30px_rgba(255,190,11,0.5)]">
                   {/* Alto-Falante Redondo */}
                   <div className="relative shrink-0 w-40 h-40 bg-[#1a1a1a] rounded-full shadow-[0_5px_15px_rgba(0,0,0,0.7),inset_0_1px_2px_rgba(255,255,255,0.2)] border-4 border-[#333] flex items-center justify-center group-hover:scale-105 transition-transform duration-300 ease-out mt-1">
                     <div className="absolute inset-1 bg-gradient-to-br from-[#4a4a4a] to-[#111] rounded-full shadow-inner"></div>
@@ -119,7 +119,7 @@ export default function App() {
             </div>
             
             <div className="w-full md:w-1/3 p-4 flex flex-col gap-6 bg-gray-200 shadow-[inset_2px_0_5px_rgba(0,0,0,0.05)] border-l border-white">
-              <div className="bg-white w-full border-2 border-dotted border-sz-light shadow-sm rounded-md overflow-hidden aero-panel">
+              <div className="bg-white w-full border-2 border-dotted border-sz-light shadow-sm rounded-md overflow-hidden">
                 <div className="bg-gradient-to-r from-sz-blue to-sz-purple text-white text-xs font-bold p-2 border-b border-gray-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
                   Browse Genres
                 </div>
