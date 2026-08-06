@@ -9,8 +9,8 @@
   --color-sz-blue: #04B2D9;
   --color-sz-light: #97BF04;
   --color-sz-dark: #1B263B;
-  --color-sz-gray: #78A633;
-  --color-sz-green: rgba(120, 166, 51, 0.8);
+  --color-sz-gray-border: #78A633;
+  --color-sz-bg-gray: #78A633;
 
   /* Fontes */
   --font-retro: "Tahoma", "Verdana", sans-serif;
@@ -44,7 +44,7 @@ body {
    ========================================= */
 
 .aero-panel {
-  backgroun-image: rgba(243, 240, 255, 0.3);
+  background: rgba(243, 240, 255, 0.3); /* CORRIGIDO: era backgroun-image */
   border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
@@ -52,6 +52,7 @@ body {
   border-radius: 8px;
   backdrop-filter: blur(8px);
 }
+
 
 .aero-header {
   background-image: linear-gradient(
@@ -66,7 +67,7 @@ body {
 }
 
 .metro-button {
-  background-image: linear-gradient(
+  background: linear-gradient(
     to bottom,
     #ffbe0b 0%,
     #e5a900 49%,
