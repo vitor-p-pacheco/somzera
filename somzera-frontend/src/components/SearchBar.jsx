@@ -9,7 +9,7 @@ export default function SearchBar({
   handleOpenMusicPage
 }) {
   return (
-    <div className="flex items-center h-6 shadow-retro-button rounded overflow-visible relative">
+    <div className="aero-header flex items-center h-6 shadow-retro-button rounded overflow-visible relative">
       <select className="bg-gray-100 border-r border-gray-400 text-xs px-2 h-full text-sz-dark outline-none cursor-pointer">
         <option>Artista</option>
         <option>Álbum</option>
