@@ -5,60 +5,75 @@ namespace App\Http\Controllers;
 use App\Models\Music;
 use App\Models\Rating;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RatingController extends Controller
 {
-    // Método para listar as últimas reviews na Home
     public function index()
     {
-        // Traz as últimas 10 reviews JÁ COM os dados da música atrelada
         $recentRatings = Rating::with('music')->latest()->take(10)->get();
         return response()->json($recentRatings);
     }
 
-    // Método para salvar uma nova review
     public function store(Request $request)
     {
-        // 1. O Pulo do Gato: Acha a música pelo spotify_id ou cria uma nova
-        $musics = Music::firstOrCreate(
-            ['spotify_id' => $request->spotify_id],
-            [
-                'title' => $request->music_title,
-                'artist' => $request->artist,
-                'url_cover' => $request->url_cover
-            ]
-        );
-
-        // 2. Cria a avaliação atrelada ao ID interno dessa música
-        $rating = Rating::create([
-            'music_id' => $musics->id,
-            'score' => $request->score,
-            'title' => $request->review_title,
-            'description' => $request->description,
-            'user' => $request->user,
+        // 1. BLINDAGEM: Validação rigorosa dos dados recebidos
+        $validated = $request->validate([
+            'spotify_id'   => 'required|string',
+            'music_title'  => 'required|string|max:255',
+            'artist'       => 'required|string|max:255',
+            'url_cover'    => 'nullable|url',
+            'score'        => 'required|integer|min:1|max:5', // Impede notas bizarras
+            'review_title' => 'required|string|max:255',
+            'description'  => 'required|string',
+            'user'         => 'required|string|max:100',
         ]);
 
-        return response()->json([
-            'message' => 'Review salva com sucesso no Somzera!',
-            'rating' => $rating
-        ], 201);
+        try {
+            // 2. Cria ou acha a música
+            $music = Music::firstOrCreate(
+                ['spotify_id' => $validated['spotify_id']],
+                [
+                    'title'     => $validated['music_title'],
+                    'artist'    => $validated['artist'],
+                    'url_cover' => $validated['url_cover']
+                ]
+            );
+
+            // 3. Cria a avaliação (Agora com limpeza de XSS)
+            $rating = Rating::create([
+                'music_id'    => $music->id,
+                'score'       => $validated['score'],
+                // strip_tags remove qualquer <script> ou tag HTML maliciosa
+                'title'       => strip_tags($validated['review_title']),
+                'description' => strip_tags($validated['description']),
+                'user'        => strip_tags($validated['user']),
+            ]);
+
+            return response()->json([
+                'message' => 'Review salva com sucesso no Somzera!',
+                'rating'  => $rating
+            ], 201);
+
+        } catch (\Exception $e) {
+            // BLINDAGEM: Se o banco cair, devolvemos um erro limpo em JSON, não uma tela de erro do Laravel
+            Log::error('Erro ao salvar review: ' . $e->getMessage());
+            
+            return response()->json([
+                'error' => 'Ocorreu um erro interno ao salvar a review. Tente novamente.'
+            ], 500);
+        }
     }
 
-    // Método para buscar as reviews de uma música específica
     public function showByMusic($spotify_id)
     {
-        // 1. Procuramos a música no nosso banco usando o ID do Spotify
         $music = Music::where('spotify_id', $spotify_id)->first();
 
-        // 2. Se a música não existe no nosso banco, significa que ninguém nunca avaliou ela!
-        // Então, retornamos um array vazio direto para o Front-end.
         if (!$music) {
             return response()->json([]);
         }
 
-        // 3. Se ela existe, usamos o relacionamento para buscar todas as avaliações dela, da mais nova para a mais velha
         $ratings = Rating::where('music_id', $music->id)->latest()->get();
-
         return response()->json($ratings);
     }
 }

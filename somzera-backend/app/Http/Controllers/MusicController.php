@@ -4,45 +4,68 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class MusicController extends Controller
 {
     public function search(Request $request)
     {
-        // 1. Pega o que o Heitor digitou
-        $query = $request->input('q', 'beatles');
+        $query = $request->input('q');
 
-        // 2. Autenticação 100% Automática
-        $authResponse = Http::asForm()->post('https://accounts.spotify.com/api/token', [
-            'grant_type' => 'client_credentials',
-            'client_id' => env('SPOTIFY_CLIENT_ID'),
-            'client_secret' => env('SPOTIFY_CLIENT_SECRET'),
-        ]);
-        $token = $authResponse->json('access_token');
+        // BLINDAGEM: Se a busca vier vazia, nem bate no Spotify
+        if (empty($query)) {
+            return response()->json([]);
+        }
 
-        // 3. Busca os dados brutos no Spotify
-        $buscaResponse = Http::withToken($token)->get('https://api.spotify.com/v1/search', [
-            'q' => $query,
-            'type' => 'track',
-            'limit' => 5
-        ]);
+        try {
+            // 1. Autenticação
+            $authResponse = Http::asForm()->post('https://accounts.spotify.com/api/token', [
+                'grant_type' => 'client_credentials',
+                'client_id' => env('SPOTIFY_CLIENT_ID'),
+                'client_secret' => env('SPOTIFY_CLIENT_SECRET'),
+            ]);
 
-        // Extrai apenas o array de músicas do JSON gigante do Spotify
-        $tracksBrutas = $buscaResponse->json('tracks.items');
+            // BLINDAGEM: Verifica se o Spotify recusou as credenciais
+            if ($authResponse->failed()) {
+                Log::error('Falha ao autenticar no Spotify: ' . $authResponse->body());
+                return response()->json(['error' => 'Falha na comunicação com o provedor de música.'], 502);
+            }
 
-        // 4. O FILTRO (A Mágica do BFF)
-        $dadosLimpos = collect($tracksBrutas)->map(function ($track) {
-            return [
-                'spotify_id' => $track['id'],
-                'music_title' => $track['name'],
-                // Pega o nome do primeiro artista da lista (o Spotify manda um array de artistas)
-                'artist' => $track['artists'][0]['name'] ?? 'Artista Desconhecido',
-                // Pega a URL da primeira imagem da capa (o Spotify manda 3 tamanhos diferentes)
-                'url_cover' => $track['album']['images'][0]['url'] ?? null,
-            ];
-        });
+            $token = $authResponse->json('access_token');
 
-        // 5. Devolve o JSON estruturado para o React
-        return response()->json($dadosLimpos);
+            // 2. Busca os dados
+            $buscaResponse = Http::withToken($token)->get('https://api.spotify.com/v1/search', [
+                'q' => $query,
+                'type' => 'track',
+                'limit' => 5
+            ]);
+
+            // BLINDAGEM: Verifica se a busca deu erro (ex: limite de requisições excedido)
+            if ($buscaResponse->failed()) {
+                Log::error('Falha ao buscar no Spotify: ' . $buscaResponse->body());
+                return response()->json(['error' => 'Não foi possível realizar a busca no momento.'], 502);
+            }
+
+            $tracksBrutas = $buscaResponse->json('tracks.items') ?? [];
+
+            // 3. O FILTRO
+            $dadosLimpos = collect($tracksBrutas)->map(function ($track) {
+                return [
+                    'spotify_id' => $track['id'] ?? null,
+                    'music_title' => $track['name'] ?? 'Título Desconhecido',
+                    'artist' => $track['artists'][0]['name'] ?? 'Artista Desconhecido',
+                    'url_cover' => $track['album']['images'][0]['url'] ?? null,
+                ];
+            })->filter(function($track) {
+                // BLINDAGEM: Garante que não vamos devolver músicas sem ID
+                return !is_null($track['spotify_id']);
+            })->values();
+
+            return response()->json($dadosLimpos);
+
+        } catch (\Exception $e) {
+            Log::error('Erro inesperado no MusicController: ' . $e->getMessage());
+            return response()->json(['error' => 'Erro interno no servidor de buscas.'], 500);
+        }
     }
 }

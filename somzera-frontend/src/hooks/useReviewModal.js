@@ -55,8 +55,25 @@ export default function useReviewModal({ onClose, onSuccess }) {
 
   const handlePreviousStep = () => setStep(1);
 
-  const handleSubmitReview = async (event) => {
+const handleSubmitReview = async (event) => {
     event.preventDefault();
+    
+    // 1. BLINDAGEM FRONT-END: Validação antes de gastar rede
+    if (!reviewTitle.trim() || !description.trim()) {
+      setSubmitError('O título e a review não podem estar vazios ou conter apenas espaços.');
+      return;
+    }
+
+    if (score < 1 || score > 5) {
+      setSubmitError('Avaliação inválida. A nota deve ser entre 1 e 5 estrelas.');
+      return;
+    }
+
+    if (reviewTitle.length > 255) {
+      setSubmitError('O título da review é muito longo (máximo 255 caracteres).');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError(null);
 
@@ -66,9 +83,9 @@ export default function useReviewModal({ onClose, onSuccess }) {
       artist: selectedMusic.artist,
       url_cover: selectedMusic.url_cover,
       score: Number(score),
-      review_title: reviewTitle,
-      description,
-      user: 'Vitor',
+      review_title: reviewTitle.trim(),
+      description: description.trim(),
+      user: 'Heitor', // Ou o nome dinâmico do utilizador, se houver
     };
 
     try {
@@ -78,7 +95,8 @@ export default function useReviewModal({ onClose, onSuccess }) {
       handleClose();
     } catch (error) {
       console.error('Erro ao salvar review:', error);
-      setSubmitError(error.message || 'Erro ao salvar review. Verifique os campos.');
+      // 2. BLINDAGEM: Exibe exatamente o erro que veio do api.js (ou do Laravel)
+      setSubmitError(error.message || 'Erro ao salvar review. Verifique os campos ou sua conexão.');
     } finally {
       setIsSubmitting(false);
     }

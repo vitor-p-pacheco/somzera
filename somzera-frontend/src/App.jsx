@@ -26,7 +26,7 @@ export default function App() {
           <SearchBar onSelectMusic={setCurrentMusicView} />
 
           <div className="flex-grow flex flex-col md:flex-row bg-sz-light">
-            <div className="flex-grow p-4 md:w-2/3 border-r border-gray-300 flex flex-col gap-4">
+            <div className="flex-grow p-4 md:w-2/3 border-r border-gray-300 flex flex-col gap-4 overflow-y-auto">
               {currentMusicView ? (
                 <MusicDetails
                   music={currentMusicView}

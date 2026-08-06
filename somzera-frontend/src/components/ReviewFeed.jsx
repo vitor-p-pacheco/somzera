@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function ReviewFeed({ reviews, isLoading, error }) {
-  if (error) {
+  // Estado para controlar a expansão na Timeline
+  const [expandedId, setExpandedId] = useState(null);
+
+  const toggleExpand = (id) => {
+    setExpandedId(expandedId === id ? null : id);
+  };
+
+  if (error) { /* ... mantido igual ... */
     return (
       <div className="bg-red-50 border border-red-300 rounded-lg p-4 text-center">
         <i className="fas fa-exclamation-triangle text-red-500 text-2xl mb-2"></i>
@@ -11,7 +18,7 @@ export default function ReviewFeed({ reviews, isLoading, error }) {
     );
   }
 
-  if (isLoading) {
+  if (isLoading) { /* ... mantido igual ... */
     return (
       <div className="text-sz-dark text-center flex flex-col items-center justify-center m-auto py-10">
         <i className="fas fa-compact-disc text-4xl mb-3 opacity-50 animate-[spin_1s_linear_infinite]"></i>
@@ -20,7 +27,7 @@ export default function ReviewFeed({ reviews, isLoading, error }) {
     );
   }
 
-  if (reviews.length === 0) {
+  if (reviews.length === 0) { /* ... mantido igual ... */
     return (
       <div className="text-sz-dark text-center flex flex-col items-center justify-center m-auto py-10">
         <i className="fas fa-compact-disc text-4xl mb-3 opacity-50 animate-[spin_4s_linear_infinite]"></i>
@@ -32,34 +39,50 @@ export default function ReviewFeed({ reviews, isLoading, error }) {
 
   return (
     <>
-      {reviews.map((review) => (
-        <div 
-          key={review.id} 
-          className="bg-white/80 p-3 rounded-md shadow-sm border border-gray-300 flex gap-4 items-start hover:bg-white transition-colors cursor-pointer"
-        >
-          <img 
-            src={review.music?.url_cover || 'https://via.placeholder.com/80'} 
-            alt={review.music?.title} 
-            className="w-16 h-16 object-cover rounded shadow border border-gray-300 shrink-0" 
-          />
-          <div className="flex-1 min-w-0">
-            <div className="flex justify-between items-start mb-1">
-              <h4 className="font-bold text-sz-dark text-sm truncate pr-2">{review.music?.title}</h4>
-              <span className="text-xs font-bold text-sz-dark bg-amber-200 px-1.5 py-0.5 rounded border border-amber-400 shadow-sm whitespace-nowrap">
-                ★ {review.score}/5
-              </span>
+      {reviews.map((review) => {
+        const isExpanded = expandedId === review.id;
+        
+        return (
+          <div 
+            key={review.id} 
+            onClick={() => toggleExpand(review.id)}
+            className="bg-white/80 p-3 rounded-md shadow-sm border border-gray-300 flex gap-4 items-start hover:bg-white transition-colors cursor-pointer"
+          >
+            <img 
+              src={review.music?.url_cover || 'https://via.placeholder.com/80'} 
+              alt={review.music?.title} 
+              className="w-16 h-16 object-cover rounded shadow border border-gray-300 shrink-0" 
+            />
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between items-start mb-1">
+                <h4 className="font-bold text-sz-dark text-sm truncate pr-2">{review.music?.title}</h4>
+                <span className="text-xs font-bold text-sz-dark bg-amber-200 px-1.5 py-0.5 rounded border border-amber-400 shadow-sm whitespace-nowrap">
+                  ★ {review.score}/5
+                </span>
+              </div>
+              <p className="text-xs text-gray-600 mb-2 truncate">{review.music?.artist}</p>
+              
+              <p className={`text-sm font-bold text-sz-purple italic break-words ${isExpanded ? '' : 'truncate'}`}>
+                "{review.title}"
+              </p>
+              
+              {review.description && (
+                <p className={`text-xs text-gray-700 mt-1 break-words whitespace-pre-wrap ${isExpanded ? '' : 'line-clamp-2'}`}>
+                  {review.description}
+                </p>
+              )}
+              
+              {!isExpanded && review.description?.length > 80 && (
+                <span className="text-[10px] text-sz-blue font-bold mt-1 inline-block">Ler mais...</span>
+              )}
+
+              <p className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-wider text-right border-t border-gray-200 pt-1">
+                Review por <span className="text-sz-blue">{review.user}</span>
+              </p>
             </div>
-            <p className="text-xs text-gray-600 mb-2 truncate">{review.music?.artist}</p>
-            <p className="text-sm font-bold text-sz-purple italic truncate">"{review.title}"</p>
-            {review.description && (
-              <p className="text-xs text-gray-700 mt-1 line-clamp-2">{review.description}</p>
-            )}
-            <p className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-wider text-right border-t border-gray-200 pt-1">
-              Review por <span className="text-sz-blue">{review.user}</span>
-            </p>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </>
   );
 }

@@ -57,14 +57,15 @@ export default function ReviewFormStep({
         </div>
       </div>
 
-      <div>
+<div>
         <label className="block text-xs font-bold uppercase tracking-wider mb-1">
           Título da Review
         </label>
         <input
           type="text"
           required
-          placeholder="Ex: Fudido de bom"
+          maxLength={255}
+          placeholder="Ex: Obra de arte em formato de áudio"
           value={reviewTitle}
           onChange={(e) => setReviewTitle(e.target.value)}
           className="w-full p-2 rounded bg-white/80 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm"
@@ -77,8 +78,9 @@ export default function ReviewFormStep({
         </label>
         <textarea
           required
+          maxLength={1000}
           rows="3"
-          placeholder="Ex: melhor musica que existe"
+          placeholder="Ex: Melhor batida que já ouvi na vida..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full p-2 rounded bg-white/80 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm resize-none"
