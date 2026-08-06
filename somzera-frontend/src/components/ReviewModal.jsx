@@ -106,11 +106,11 @@ export default function ReviewModal({ isOpen, onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-sm p-4">
-      <div className="aero-panel w-full max-w-xl text-sz-dark overflow-hidden shadow-2xl rounded-lg">
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+      <div className="aero-panel bg-sz-green w-full max-w-xl text-sz-dark overflow-hidden shadow-2xl rounded-lg">
         
         {/* Cabeçalho Aero */}
-        <div className="aero-header p-3 flex justify-between items-center border-b border-white/40">
+        <div className="bg-sz-light aero-header p-3 flex justify-between items-center border-b border-white/40">
           <h3 className="font-bold text-sm tracking-wide flex items-center gap-2">
             <span>💿</span> {step === 1 ? 'Buscar Música para Review' : 'Escrever Avaliação'}
           </h3>
@@ -198,7 +198,7 @@ export default function ReviewModal({ isOpen, onClose, onSuccess }) {
                   className="w-20 h-20 object-cover rounded-md shadow"
                 />
                 <div className="flex-1 min-w-0">
-                  <span className="text-xs font-semibold text-amber-700 uppercase tracking-wider">Música Selecionada</span>
+                  <span className="text-xs font-semibold text-sz-purple uppercase tracking-wider">Música Selecionada</span>
                   <h4 className="font-bold text-base truncate leading-tight">
                     {selectedMusic.name || selectedMusic.music_title}
                   </h4>
@@ -206,7 +206,7 @@ export default function ReviewModal({ isOpen, onClose, onSuccess }) {
                   <button 
                     type="button" 
                     onClick={() => setStep(1)} 
-                    className="text-xs text-amber-800 underline hover:text-amber-900 mt-1 inline-block"
+                    className="text-xs text-sz-yellow-500 underline hover:text-sz-yellow-900 mt-1 inline-block"
                   >
                     Trocar música
                   </button>
@@ -215,7 +215,7 @@ export default function ReviewModal({ isOpen, onClose, onSuccess }) {
 
               {/* Nota (Score 1 a 5) */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider mb-1">
+                <label className="inline-block p-1 rounded margin-bottom aero-header text-xs bg-sz-light    font-bold uppercase tracking-wider mb-1">
                   Nota (1 a 5 Estrelas)
                 </label>
                 <div className="flex gap-2 items-center">
@@ -239,7 +239,7 @@ export default function ReviewModal({ isOpen, onClose, onSuccess }) {
 
               {/* Título da Review */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider mb-1">
+                <label className="inline-block p-1 rounded margin-bottom aero-header text-xs bg-sz-light    font-bold uppercase tracking-wider mb-1">
                   Título da Review
                 </label>
                 <input
@@ -254,9 +254,10 @@ export default function ReviewModal({ isOpen, onClose, onSuccess }) {
 
               {/* Descrição / Opinião */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider mb-1">
+                <label className="inline-block p-1 rounded margin-bottom aero-header text-xs bg-sz-light    font-bold uppercase tracking-wider mb-1">
                   Sua Opinião / Review
                 </label>
+
                 <textarea
                   required
                   rows="3"

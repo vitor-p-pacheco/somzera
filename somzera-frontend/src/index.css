@@ -9,8 +9,8 @@
   --color-sz-blue: #04B2D9;
   --color-sz-light: #97BF04;
   --color-sz-dark: #1B263B;
-  --color-sz-gray-border: #78A633;
-  --color-sz-bg-gray: #78A633;
+  --color-sz-gray: #78A633;
+  --color-sz-green: rgba(120, 166, 51, 0.8);
 
   /* Fontes */
   --font-retro: "Tahoma", "Verdana", sans-serif;
@@ -66,7 +66,7 @@ body {
 }
 
 .metro-button {
-  background: linear-gradient(
+  background-image: linear-gradient(
     to bottom,
     #ffbe0b 0%,
     #e5a900 49%,
