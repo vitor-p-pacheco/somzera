@@ -46,7 +46,7 @@ export default function App() {
           </div>
 
           <div className="bg-gray-300 border-t border-gray-400 h-6 flex items-center justify-between px-3 text-[10px] text-gray-700 shadow-[inset_0_1px_0_rgba(255,255,255,1)] z-10 relative mt-auto">
-            <span className="font-bold text-sz-dark">Pronto</span>
+            <span className="font-bold text-sz-dark"></span>
           </div>
         </div>
       </main>
