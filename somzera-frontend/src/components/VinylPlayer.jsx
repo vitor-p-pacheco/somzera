@@ -1,15 +1,21 @@
 import React from 'react';
 
+{/* BLINDAGEM VISUAL: A classe shrink-0 impede que o flexbox esmague o alto-falante, mantendo-o 100% redondo */}
 export default function VinylPlayer({ onReviewClick }) {
   return (
-    <div className="bg-header-gradient p-2 rounded-lg border border-sz-blue shadow-lg relative overflow-hidden flex flex-col items-center justify-center py-10 group">
-      <div className="absolute inset-0 bg-glass-gradient opacity-30 pointer-events-none z-0"></div>
-      <h2 
-        className="relative z-10 text-2xl md:text-3xl font-extrabold text-sz-yellow mb-6 tracking-wider text-center" 
-        style={{ textShadow: '2px 2px 0px black' }}
-      >
-        O que você está ouvindo?
-      </h2>
+        <div className="shrink-0 aero-panel bg-sz-purple/90 p-2 rounded-lg border border-sz-dark shadow-lg relative overflow-hidden flex flex-col items-center 
+justify-center py-10 group">
+      <div className="absolute inset-0 bg-glass-gradient opacity-10 pointer-events-none z-0"></div>
+
+        <h2
+          className="relative z-10 text-2xl md:text-3xl font-extrabold text-sz-yellow mb-6 tracking-wider text-center"
+          style={{ textShadow: '2px 2px 0px black' }}
+        >
+          O que você está ouvindo?
+        </h2>
+
+
+      {/* ... (o resto do código do componente continua exatamente igual) ... */}
 
       <div className="relative z-10 w-64 h-64 bg-gradient-to-b from-sz-dark to-gray-500 rounded-xl border-4 border-sz-yellow shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_2px_5px_rgba(255,255,255,0.9)] p-3 flex flex-col items-center justify-between transition-all duration-300 hover:shadow-[0_15px_30px_rgba(255,190,11,0.5)]">
         <div className="relative shrink-0 w-40 h-40 bg-[#1a1a1a] rounded-full shadow-[0_5px_15px_rgba(0,0,0,0.7),inset_0_1px_2px_rgba(255,255,255,0.2)] border-4 border-[#333] flex items-center justify-center group-hover:scale-105 transition-transform duration-300 ease-out mt-1">

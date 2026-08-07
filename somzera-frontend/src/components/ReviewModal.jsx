@@ -9,7 +9,7 @@ export default function ReviewModal({ isOpen, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-sm p-4">
-      <div className="aero-panel w-full max-w-xl text-sz-dark overflow-hidden">
+      <div className="aero-panel bg-sz-light w-full max-w-xl text-sz-dark overflow-hidden">
         <div className="aero-header p-3 flex justify-between items-center">
           <h3 className="font-bold text-sm tracking-wide flex items-center gap-2">
             <span>💿</span> {reviewModal.step === 1 ? 'Buscar Música para Review' : 'Escrever Avaliação'}

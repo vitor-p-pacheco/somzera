@@ -17,45 +17,38 @@ export default function App() {
     fetchRecentReviews,
   } = useRecentReviews();
 
-  return (
-    <div className="text-sz-dark h-screen flex flex-col overflow-x-hidden">
+return (
+    // 1. Trocamos overflow-x-hidden por overflow-hidden para travar o Body
+    <div className="text-sz-dark h-screen flex flex-col overflow-hidden">
       <Header />
 
-      <main className="flex-grow flex justify-center p-4 sm:p-6 lg:p-8 relative">
-        <div className="aero-panel w-full max-w-6xl h-full min-h-[600px] flex flex-col overflow-hidden relative">
+      {/* 2. Adicionamos overflow-hidden aqui para o main não passar da tela */}
+      <main className="flex-grow flex justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden">
+        <div className="aero-panel w-full max-w-6xl h-full flex flex-col overflow-hidden relative">
           <SearchBar onSelectMusic={setCurrentMusicView} />
 
-          <div className="flex-grow flex flex-col md:flex-row bg-sz-light">
+          {/* 3. Adicionamos overflow-hidden e min-h-0 (Hack pro flexbox respeitar o limite) */}
+          <div className="flex-grow flex flex-col md:flex-row bg-sz-light overflow-hidden min-h-0">
+            
+            {/* 4. Colocamos o overflow-y-auto APENAS na coluna principal */}
             <div className="flex-grow p-4 md:w-2/3 border-r border-gray-300 flex flex-col gap-4 overflow-y-auto">
               {currentMusicView ? (
-                <MusicDetails
-                  music={currentMusicView}
-                  onClose={() => setCurrentMusicView(null)}
-                />
+                <MusicDetails music={currentMusicView} onClose={() => setCurrentMusicView(null)} />
               ) : (
-                <HomeFeed
-                  onReviewClick={() => setIsModalOpen(true)}
-                  reviews={recentReviews}
-                  isLoading={isLoadingReviews}
-                  error={error}
-                />
+                <HomeFeed onReviewClick={() => setIsModalOpen(true)} reviews={recentReviews} isLoading={isLoadingReviews} error={error} />
               )}
             </div>
             
             <Sidebar />
           </div>
 
-          <div className="bg-gray-300 border-t border-gray-400 h-6 flex items-center justify-between px-3 text-[10px] text-gray-700 shadow-[inset_0_1px_0_rgba(255,255,255,1)] z-10 relative mt-auto">
+          <div className="bg-gray-300 border-t border-gray-400 h-6 flex items-center justify-between px-3 text-[10px] text-gray-700 shadow-[inset_0_1px_0_rgba(255,255,255,1)] z-10 relative mt-auto shrink-0">
             <span className="font-bold text-sz-dark"></span>
           </div>
         </div>
       </main>
 
-      <ReviewModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={fetchRecentReviews}
-      />
+      <ReviewModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSuccess={fetchRecentReviews} />
     </div>
   );
 }
